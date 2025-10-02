@@ -1,0 +1,205 @@
+import pandas as pd
+import os
+
+# Define the file paths
+file_path_2006_2018 = "/content/drive/MyDrive/CIENCIA DE DATOS JUAN MANUEL CASTIBLANCO MOSQUERA/CORTE 2/COLOMBIA/datos/datos_2006_2018.xlsx"
+file_path_2019_2024 = "/content/drive/MyDrive/CIENCIA DE DATOS JUAN MANUEL CASTIBLANCO MOSQUERA/CORTE 2/COLOMBIA/datos/datos_2019_2024.xlsx"
+output_folder = "/content/drive/MyDrive/CIENCIA DE DATOS JUAN MANUEL CASTIBLANCO MOSQUERA/CORTE 2/COLOMBIA/datos/"
+output_file_name = "datos_2006_2024.xlsx"
+output_path = os.path.join(output_folder, output_file_name)
+
+# Read the Excel files
+df_2006_2018 = pd.read_excel(file_path_2006_2018)
+df_2019_2024 = pd.read_excel(file_path_2019_2024)
+
+# Rename columns in df_2019_2024 to match df_2006_2018
+# Based on the previous output, identify and rename the differing columns
+df_2019_2024 = df_2019_2024.rename(columns={
+    'Código Dane departamento': 'Código Dane Departamento',
+    'Código Dane municipio': 'Código Dane Municipio',
+    'Área sembrada (ha)': 'Área Sembrada\n(ha)',
+    'Área cosechada (ha)': 'Área Cosechada\n(ha)',
+    'Producción (t)': 'Producción\n(t)',
+    'Rendimiento (t/ha)': 'Rendimiento\n(t/ha)',
+    'Nombre científico del cultivo': 'Nombre cientifíco del cultivo',
+    'Subgrupo': 'Subgrupo \n' # Added based on the difference in previous output
+})
+
+
+# Check if column names and count are the same after renaming
+if not df_2006_2018.columns.equals(df_2019_2024.columns):
+    print("Column names are still different after renaming.")
+    print("Columns in datos_2006_2018:", df_2006_2018.columns)
+    print("Columns in datos_2019_2024:", df_2019_2024.columns)
+else:
+    # Concatenate the dataframes
+    combined_df = pd.concat([df_2006_2018, df_2019_2024], ignore_index=True)
+
+    # Create the output folder if it doesn't exist
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Save the combined dataframe to a new Excel file
+    combined_df.to_excel(output_path, index=False)
+import pandas as pd
+
+# Define the path to the combined file
+combined_file_path = "/content/drive/MyDrive/CIENCIA DE DATOS JUAN MANUEL CASTIBLANCO MOSQUERA/CORTE 2/COLOMBIA/datos/datos_2006_2024.xlsx"
+
+# Read the combined Excel file
+combined_df = pd.read_excel(combined_file_path)
+
+# Function to capitalize the first letter and lowercase the rest
+def capitalize_words(text):
+    if isinstance(text, str):
+        return ' '.join(word.capitalize() for word in text.split())
+    return text
+
+# Apply the function to all string columns
+for col in combined_df.columns:
+    if combined_df[col].dtype == 'object': # Check if the column is of object type (usually strings)
+        combined_df[col] = combined_df[col].apply(capitalize_words)
+
+
+# Save the modified dataframe back to the Excel file
+combined_df.to_excel(combined_file_path, index=False)
+
+print(f"Modified data saved successfully to: {combined_file_path}")
+display(combined_df.columns)
+unique_departamentos = combined_df['Departamento'].unique()
+print("Unique values in 'Departamento' column:")
+for dep in unique_departamentos:
+    print(f"- {dep}")
+department_mapping = {
+    'Atlantico': 'Atlántico',
+    'Bolivar': 'Bolívar',
+    'Boyaca': 'Boyacá',
+    'Caqueta': 'Caquetá',
+    'Cordoba': 'Córdoba',
+    'Choco': 'Chocó',
+    'Quindio': 'Quindío',
+    'San Andres Y Providencia': 'Archipiélago De San Andrés, Providencia Y Santa Catalina',
+    'Guainia': 'Guainía',
+    'Vaupes': 'Vaupés'
+}
+
+combined_df['Departamento'] = combined_df['Departamento'].replace(department_mapping)
+
+unique_departamentos_cleaned = combined_df['Departamento'].unique()
+print("\nUnique values in 'Departamento' column after cleaning:")
+for dep in unique_departamentos_cleaned:
+    print(f"- {dep}")
+unique_cultivos = combined_df['Cultivo'].unique()
+print("Unique values in 'Cultivo' column:")
+for cultivo in unique_cultivos:
+    print(f"- {cultivo}")
+cultivo_mapping = {
+    'Cafe': 'Café',
+    'Maiz': 'Maíz',
+    'Platano': 'Plátano',
+    'Aji': 'Ají',
+    'Brocoli': 'Brócoli',
+    'Caña Azucarera': 'Caña',
+    'Caña Flecha': 'Caña',
+    'Caña Miel': 'Caña',
+    'Caña Panelera': 'Caña',
+    'Limon': 'Limón',
+    'Pimenton': 'Pimentón',
+    'Rabano': 'Rábano',
+    'Tomate De Arbol': 'Tomate De Árbol',
+    'Gulupa O Cholupa': 'Gulupa',
+    'Maracuya': 'Maracuyá',
+    'Calabacin, Calabaza': 'Calabacín',
+    'Guanabana': 'Guanábana',
+    'Tabaco Negro': 'Tabaco',
+    'Tabaco Rubio': 'Tabaco',
+    'Sabila': 'Sábila',
+    'Agraz - Mortiño': 'Agraz',
+    'Arandano': 'Arándano',
+    'Borojo': 'Borojó',
+    'Malanga, Achín, Yota, Papa China, Bore': 'Malanga',
+    'Algodon': 'Algodón',
+    'Curcuma O Azafran': 'Cúrcuma',
+    'Ajonjoli': 'Ajonjolí',
+    'Melon': 'Melón',
+    'Nispero': 'Níspero',
+    'Marañon': 'Marañón',
+    'Durazno O Albaricoque': 'Durazno',
+    'Papayuela -babaco': 'Papayuela',
+    'Esparrago': 'Espárrago',
+    'Copoazu': 'Copoazú',
+    'Asai': 'Asaí',
+    'Cimarron': 'Cimarrón',
+    'Arbol De Pan O Pepa Del Pan': 'Pepa De Pan',
+    'Oregano': 'Orégano',
+    'Rambutan': 'Rambután',
+    'Chiraran - Albahaca': 'Albahaca',
+    'Estevia': 'Stevia',
+    'Curcuma': 'Cúrcuma',
+    'Plantas Aromaticas Y Medicinales': 'Plantas Aromaticas',
+    'Plantas Medicinales': 'Plantas Aromaticas',
+    'Citricos': 'Otros Cítricos',
+    'Hortalizas Varias': 'Otras Hortalizas',
+    'Frutales Varios': 'Otros Frutales',
+    'Otros Cultivos Para Condimentos, Bebidas Medicinales Y Aromáticas': 'Otros Cultivos Para Condimentos, Bebidas Medicinales Y Aromaticas',
+    'Otras Raíces Y Tubérculos': 'Otras Raices Y Tuberculos',
+    'Otros Caducifolios': 'Otros Caducifolios',
+    'Otros Cultivos Tropicales Tradicionales': 'Otros Cultivos Tropicales Tradicionales',
+    'Otras Oleaginosas': 'Otras Oleaginosas'
+}
+
+combined_df['Cultivo'] = combined_df['Cultivo'].replace(cultivo_mapping)
+
+unique_cultivos_cleaned = combined_df['Cultivo'].unique()
+print("\nUnique values in 'Cultivo' column after cleaning:")
+for cultivo in unique_cultivos_cleaned:
+    print(f"- {cultivo}")
+unique_departamentos_final = combined_df['Departamento'].unique()
+print("Final unique values in 'Departamento' column:")
+for dep in unique_departamentos_final:
+    print(f"- {dep}")
+
+unique_cultivos_final = combined_df['Cultivo'].unique()
+print("\nFinal unique values in 'Cultivo' column:")
+for cultivo in unique_cultivos_final:
+    print(f"- {cultivo}")
+# Define the output file path for the cleaned data
+combined_file_path = "/content/drive/MyDrive/CIENCIA DE DATOS JUAN MANUEL CASTIBLANCO MOSQUERA/CORTE 2/COLOMBIA/datos/datos_2006_2024.xlsx"
+
+# Save the combined dataframe to a new Excel file
+combined_df.to_excel(combined_file_path, index=False)
+
+# Print a confirmation message
+print(f"Cleaned data saved successfully to: {combined_file_path}")
+# Get the number of rows and columns
+num_rows, num_cols = combined_df.shape
+print(f"Number of rows: {num_rows}")
+print(f"Number of columns: {num_cols}")
+# Check for missing values
+missing_values = combined_df.isnull().sum()
+print("\nMissing values per column:")
+display(missing_values)
+# Get the number of unique crops
+num_unique_crops = combined_df['Cultivo'].nunique()
+print(f"\nNumber of unique crops: {num_unique_crops}")
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Calculate the total planted area for each crop
+crop_planted_area = combined_df.groupby('Cultivo')['Área Sembrada\n(ha)'].sum().sort_values(ascending=False)
+
+# Get the top 10 crops
+top_10_crops = crop_planted_area.head(10)
+
+# Create a bar plot
+plt.figure(figsize=(12, 6))
+sns.barplot(x=top_10_crops.index, y=top_10_crops.values, palette='viridis')
+plt.xticks(rotation=45, ha='right')
+plt.xlabel('Cultivo')
+plt.ylabel('Área Sembrada (ha)')
+plt.title('Top 10 Cultivos por Área Sembrada')
+plt.tight_layout()
+plt.show()
+
+
+
+    print(f"Combined file saved successfully to: {output_path}")
